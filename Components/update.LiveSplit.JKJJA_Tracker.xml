@@ -1,0 +1,10 @@
+<updates>
+    <update version="1.0">
+        <files>
+            <file path="Components/LiveSplit.JKJA_Tracker.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change>Initial release.</change>
+        </changelog>
+    </update>
+</updates>
