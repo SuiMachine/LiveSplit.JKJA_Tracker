@@ -27,7 +27,7 @@ namespace LiveSplit.JKJA_Tracker
         }
         public string UpdateURL
         {
-            get { return "https://raw.githubusercontent.com/SuiMachine/LiveSplit.JKJA_StatsTracker/master/"; }
+            get { return "https://raw.githubusercontent.com/SuiMachine/LiveSplit.JKJA_Tracker/master/"; }
         }
         public Version Version
         {
