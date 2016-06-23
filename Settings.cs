@@ -42,11 +42,13 @@ namespace LiveSplit.JKJA_Tracker
 
         //Memory Locations
         public DeepPointer p_LevelName { get; set; }
-        public DeepPointer p_currentSecrets { get; set; }
-        public DeepPointer p_levelKills { get; set; }
-        public DeepPointer p_maxKills { get; set; }
-        public DeepPointer p_shotsFired { get; set; }
-        public DeepPointer p_shotsHit { get; set; }
+
+        //-- These DeepPointers were replaced with Trainer read class, because of the bug in DeepPointer class that occurs when module gets unloaded --
+        //public DeepPointer p_currentSecrets { get; set; }
+        //public DeepPointer p_levelKills { get; set; }
+        //public DeepPointer p_maxKills { get; set; }
+        //public DeepPointer p_shotsFired { get; set; }
+        //public DeepPointer p_shotsHit { get; set; }
 
         public bool field1Enabled { get; set; }
         public bool field2Enabled { get; set; }
@@ -131,11 +133,11 @@ namespace LiveSplit.JKJA_Tracker
         private void setAdresses()
         {
             p_LevelName = new DeepPointer(0x480C5D);
-            p_currentSecrets = new DeepPointer(0x000091D4, 0x6a0, 0x16dc);
-            p_levelKills = new DeepPointer(0x000091D4, 0x6a0, 0x16f0);
-            p_maxKills = null;
-            p_shotsFired = new DeepPointer(0x000091D4, 0x6a0, 0x16e4);
-            p_shotsHit = new DeepPointer(0x000091D4, 0x6a0, 0x16e8);
+            //p_currentSecrets = new DeepPointer(0x000091D4, 0x6a0, 0x16dc);
+            //p_levelKills = new DeepPointer(0x000091D4, 0x6a0, 0x16f0);
+            //p_maxKills = null;
+            //p_shotsFired = new DeepPointer(0x000091D4, 0x6a0, 0x16e4);
+            //p_shotsHit = new DeepPointer(0x000091D4, 0x6a0, 0x16e8);
         }
 
         private void ColorButtonClick(object sender, EventArgs e)

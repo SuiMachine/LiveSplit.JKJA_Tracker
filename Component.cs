@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Diagnostics;
+using LiveSplit.ComponentUtil;
 
 namespace LiveSplit.JKJA_Tracker
 {
@@ -54,6 +55,8 @@ namespace LiveSplit.JKJA_Tracker
         private Color OverrideTextColor;
 
         private System.Diagnostics.Process process;
+        private int jkaModuleAddress = 0x0;
+        private int ModuleAddressCheckTick = 0;
 
         private Bitmap bmpBuffer;
         private Graphics gBuffer;
@@ -361,24 +364,56 @@ namespace LiveSplit.JKJA_Tracker
         
         public void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
-            if (process != null && settings.p_currentSecrets != null && !process.HasExited && 
-                process.ProcessName == "jasp")
+            if (process != null && !process.HasExited && process.ProcessName == "jasp")
             {
-                currentMapName = settings.p_LevelName.DerefString(process, 20);
-                v_SecretsFound = getReasonable(settings.p_currentSecrets.Deref<int>(process), v_SecretsFound);
-                v_enemiesKilled = getReasonable(settings.p_levelKills.Deref<int>(process), v_enemiesKilled);
-                v_shotsFired = getReasonable(settings.p_shotsFired.Deref<int>(process), v_shotsFired);
-                v_shotsHit = getReasonable(settings.p_shotsHit.Deref<int>(process), v_shotsHit);
-
-                if (invalidator != null)
+                getDLLAddress();
+                if (jkaModuleAddress != 0x0)
                 {
-                    invalidator.Invalidate(0, 0, width, height);
+                    currentMapName = settings.p_LevelName.DerefString(process, 20);
+                    try
+                    {
+                        v_SecretsFound = Trainer.ReadPointerInteger(process, jkaModuleAddress + 0x282C28, new int[] { 0x16dc });
+                        v_enemiesKilled = Trainer.ReadPointerInteger(process, jkaModuleAddress + 0x282C28, new int[] { 0x16f0 });
+                        v_shotsFired = Trainer.ReadPointerInteger( process , jkaModuleAddress + 0x282C28, new int[] { 0x16e4 });
+                        v_shotsHit = Trainer.ReadPointerInteger(process, jkaModuleAddress + 0x282C28, new int[] { 0x16e8 });
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.WriteLine("STATS TRACKER EXCEPTION: " + e.ToString());
+                        jkaModuleAddress = 0;
+                    }
+
+
+                    //v_SecretsFound = getReasonable(settings.p_currentSecrets.Deref<int>(process), v_SecretsFound);
+                    //v_enemiesKilled = getReasonable(settings.p_levelKills.Deref<int>(process), v_enemiesKilled);
+                    //v_shotsFired = getReasonable(settings.p_shotsFired.Deref<int>(process), v_shotsFired);
+                    //v_shotsHit = getReasonable(settings.p_shotsHit.Deref<int>(process), v_shotsHit);
+
+
+                    if (invalidator != null)
+                    {
+                        invalidator.Invalidate(0, 0, width, height);
+                    }
                 }
             }
             else
             {
                 process = System.Diagnostics.Process.GetProcessesByName("jasp").FirstOrDefault();
             }            
+        }
+
+        private void getDLLAddress()
+        {
+            if (ModuleAddressCheckTick == 62 * 5)
+            {
+                ModuleAddressCheckTick = 0;
+                IntPtr ptr = AwfulRippedOffCode.GetGameModuleBase(process);
+
+                jkaModuleAddress = ptr.ToInt32();
+                Debug.WriteLine("STAT TRACKER: Periodic address check = 0x" + jkaModuleAddress.ToString("X4"));
+            }
+            else
+                ModuleAddressCheckTick++;
         }
 
         private int getReasonable(int value, int oldValue)
