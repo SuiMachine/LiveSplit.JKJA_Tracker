@@ -318,7 +318,7 @@ namespace LiveSplit.JKJA_Tracker
                 case (int)elementType.Accuracy:
                     g.DrawString("Accuracy:", font, brush, new RectangleF(x, y, width, height), descriptiveTextFormat);
                     if(v_shotsFired > 0)
-                        g.DrawString(((int)(v_shotsHit/(v_shotsFired*1.0f)*100)).ToString() + " %", font, brush, new RectangleF(x, y, width, height), valueTextFormat);
+                        g.DrawString((v_shotsHit/(v_shotsFired*1.0f)*100).ToString("0.00") + " %", font, brush, new RectangleF(x, y, width, height), valueTextFormat);
                     else
                         g.DrawString("∞", font, brush, new RectangleF(x, y, width, height), valueTextFormat);
                     break;
